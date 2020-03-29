@@ -55,6 +55,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res_data['current_page'], 2)
         self.assertTrue(res_data['success'])
 
+    # Test for an out-of-bounds questions page
+    def get_out_of_bounds_page(self):
+        response = self.client().get('/questions?page=100')
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 404)
+        self.assertFalse(res_data['success'])
+        self.assertFalse(len(res_data['questions']))
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
