@@ -129,7 +129,7 @@ class TriviaTestCase(unittest.TestCase):
         'difficulty': 2,
         'category': 5})
         res_data = json.loads(response.data)
-        added_question = Question.query.get(20)
+        added_question = Question.query.get(24)
 
         self.assertEqual(response.status_code, 201)
         self.assertTrue(added_question)
