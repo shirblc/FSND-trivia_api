@@ -121,6 +121,20 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertFalse(res_data['success'])
 
+    # Test for adding a new question
+    def post_new_question(self):
+        response = self.client().post('/questions', json={
+        'question': 'What is the longest running science fiction show?',
+        'answer': 'Doctor Who',
+        'difficulty': 2,
+        'category': 5})
+        res_data = json.loads(response.data)
+        added_question = Question.query.get(20)
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(added_question)
+        self.assertTrue(res_data['success'])
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
