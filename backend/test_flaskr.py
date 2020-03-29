@@ -45,6 +45,15 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(res_data['current_page'], 1)
         self.assertTrue(len(res_data['categories']))
 
+    # Test for the pagination (checking page 2)
+    def get_page_two_questions(self):
+        response = self.client().get('/questions?page=2')
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_data['questions']), 10)
+        self.assertEqual(res_data['current_page'], 2)
+        self.assertTrue(res_data['success'])
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
