@@ -83,6 +83,25 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(res_data['success'])
         self.assertFalse(len(res_data['questions']))
 
+    # Test for the search with a term that exists in the database
+    def post_search_term(self):
+        response = self.client().post('/questions', json={'searchTerm':'title'})
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_data['questions'], 2)
+        self.assertTrue(len(res_data['questions']))
+        self.assertTrue(res_data['success'])
+
+    # Test for search with term that doesn't exist in the database
+    def post_search_nonexistent_term(self):
+        response = self.client().post('/questions', json={'searchTerm':'meow'})
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(res_data['success'])
+        self.assertFalse(len(res_data['questions']))
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
