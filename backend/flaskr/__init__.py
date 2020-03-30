@@ -82,7 +82,7 @@ def create_app(test_config=None):
           question = Question(question=question_data['question'], answer=question_data['answer'],
           difficulty=question_data['difficulty'], category=question_data['category'])
 
-          # Try to add the new question to the database 
+          # Try to add the new question to the database
           try:
               question.insert()
               questions = Question.query.all()
@@ -97,19 +97,6 @@ def create_app(test_config=None):
       'questions': paginated_questions_list,
       'total_questions': len(questions)
       })
-
-  '''
-  @TODO:
-  Create an endpoint to handle GET requests for questions,
-  including pagination (every 10 questions).
-  This endpoint should return a list of questions,
-  number of total questions, current category, categories.
-
-  TEST: At this point, when you start the application
-  you should see questions and categories generated,
-  ten questions per page and pagination at the bottom of the screen for three pages.
-  Clicking on the page numbers should update the questions.
-  '''
 
   # Route handler for category pages
   @app.route('/categories/<category_id>/questions')
@@ -164,27 +151,6 @@ def create_app(test_config=None):
       return jsonify({
       'categories': categories_dict
       })
-
-  '''
-  @TODO:
-  Create an endpoint to POST a new question,
-  which will require the question and answer text,
-  category, and difficulty score.
-
-  TEST: When you submit a question on the "Add" tab,
-  the form will clear and the question will appear at the end of the last page
-  of the questions list in the "List" tab.
-  '''
-
-  '''
-  @TODO:
-  Create a GET endpoint to get questions based on category.
-
-  TEST: In the "List" tab / main screen, clicking on one of the
-  categories in the left column will cause only questions of that
-  category to be shown.
-  '''
-
 
   '''
   @TODO:
