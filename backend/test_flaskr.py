@@ -14,7 +14,7 @@ class TriviaTestCase(unittest.TestCase):
         """Define test variables and initialize app."""
         self.app = create_app()
         self.client = self.app.test_client
-        self.database_name = "trivia_test"
+        self.database_name = "trivia"
         self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
@@ -35,65 +35,62 @@ class TriviaTestCase(unittest.TestCase):
     """
 
     # Test for loading the main page (question list)
-    def get_questions(self):
+    def test_get_questions(self):
         response = self.client().get('/questions')
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(res_data['success'])
-        self.assertEqual(len(res_data['questions']), 10)
+        self.assertEqual(len(res_data['questions']), 9)
         self.assertEqual(res_data['current_page'], 1)
         self.assertTrue(len(res_data['categories']))
 
     # Test for the pagination (checking page 2)
-    def get_page_two_questions(self):
+    def test_get_page_two_questions(self):
         response = self.client().get('/questions?page=2')
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(res_data['questions']), 10)
+        self.assertEqual(len(res_data['questions']), 9)
         self.assertEqual(res_data['current_page'], 2)
         self.assertTrue(res_data['success'])
 
     # Test for an out-of-bounds questions page
-    def get_out_of_bounds_page(self):
+    def test_get_out_of_bounds_page(self):
         response = self.client().get('/questions?page=100')
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
-        self.assertFalse(len(res_data['questions']))
 
     # Test for a category questions pages
-    def get_category_page(self):
-        response = self.clien().get('/categories/1/questions')
+    def test_get_category_page(self):
+        response = self.client().get('/categories/1/questions')
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(res_data['category'], 1)
+        self.assertEqual(res_data['current_category'], '1')
         self.assertTrue(len(res_data['questions']))
         self.assertTrue(res_data['success'])
 
     # Test for an out-of-bounds category page
-    def get_out_of_bounds_category_page(self):
-        response = self.clien().get('/categories/1/questions?page=50')
+    def test_get_out_of_bounds_category_page(self):
+        response = self.client().get('/categories/1/questions?page=50')
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
-        self.assertFalse(len(res_data['questions']))
 
     # Test for an out-of-bounds category
-    def get_out_of_bounds_category(self):
+    def test_get_out_of_bounds_category(self):
         response = self.client().get('/categories/100/questions')
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
-        self.assertFalse(len(res_data['questions']))
 
     # Test for the search with a term that exists in the database
-    def post_search_term(self):
+    def test_post_search_term(self):
         response = self.client().post('/questions', json={'searchTerm':'title'})
         res_data = json.loads(response.data)
 
@@ -103,7 +100,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(res_data['success'])
 
     # Test for search with term that doesn't exist in the database
-    def post_search_nonexistent_term(self):
+    def test_post_search_nonexistent_term(self):
         response = self.client().post('/questions', json={'searchTerm':'meow'})
         res_data = json.loads(response.data)
 
@@ -112,7 +109,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(len(res_data['questions']))
 
     # Test for deleting an existing question
-    def delete_existing_question(self):
+    def test_delete_existing_question(self):
         response = self.client().delete('/questions/1')
         res_data = json.loads(response.data)
         deleted_question = Question.query.filter(Question.id == 1).one_or_none()
@@ -123,7 +120,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertTrue(res_data['success'])
 
     # Test for deleting a question that doesn't exist
-    def delete_nonexistent_question(self):
+    def test_delete_nonexistent_question(self):
         response = self.client().delete('/questions/100')
         res_data = json.loads(response.data)
 
@@ -131,7 +128,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertFalse(res_data['success'])
 
     # Test for adding a new question
-    def post_new_question(self):
+    def test_post_new_question(self):
         response = self.client().post('/questions', json={
         'question': 'What is the longest running science fiction show?',
         'answer': 'Doctor Who',
