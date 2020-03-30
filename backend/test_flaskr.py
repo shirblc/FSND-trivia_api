@@ -114,7 +114,7 @@ class TriviaTestCase(unittest.TestCase):
         deleted_question = Question.query.filter(Question.id == 2).one_or_none()
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(deleted_question, None)
+        self.assertIsNone(deleted_question)
         self.assertEqual(res_data['question'], 2)
         self.assertEqual(res_data['total_questions'], 18)
         self.assertTrue(res_data['success'])
@@ -135,7 +135,7 @@ class TriviaTestCase(unittest.TestCase):
         "difficulty": 2,\
         "category": 5 }'
         response = self.client().post('/questions', data=new_question)
-        print(response)
+
         res_data = json.loads(response.data)
         added_question = Question.query.get(24)
 

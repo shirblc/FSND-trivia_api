@@ -149,6 +149,7 @@ def create_app(test_config=None):
           abort(404)
 
       return jsonify({
+      'success': True,
       'categories': categories_dict
       })
 
