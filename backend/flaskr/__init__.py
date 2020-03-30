@@ -26,6 +26,37 @@ def create_app(test_config=None):
   for all available categories.
   '''
 
+  # Home route handler.
+  @app.route('/')
+  def index():
+      questions = Question.query.order_by(Question.id).all()
+      current_page = request.args.get('page', 1, type=int)
+      first_question_num = QUESTIONS_PER_PAGE * (current_page - 1)
+      paginated_questions = questions[first_question_num:(first_question_num+9)]
+      paginated_questions_list = []
+      categories = Category.query.all()
+      categories_dict = {}
+
+      for category in categories:
+          categories_dict[category.id] = category.type
+
+      for question in paginated_questions:
+          paginated_questions_list.append({
+          'id': question.id,
+          'question': question.question,
+          'answer': question.answer,
+          'category': question.category,
+          'difficulty': question.difficulty
+          })
+
+      return jsonify({
+      'success': True,
+      'current_page': current_page,
+      'questions': paginated_questions_list,
+      'total_questions': len(questions),
+      'categories': categories_dict
+      })
+
 
   '''
   @TODO:
