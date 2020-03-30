@@ -133,6 +133,23 @@ def create_app(test_config=None):
       'total_questions': total_questions
       })
 
+  # Route handler for the categories list (for the new question page)
+  @app.route('/categories')
+  def get_categories():
+      categories = Category.query.all()
+      categories_dict = {}
+
+      for category in categories:
+          categories_dict[category.id] = category.type
+
+      # if there are no categories, abort
+      if(len(categories_dict) == 0):
+          abort(404)
+
+      return jsonify({
+      'categories': categories_dict
+      })
+
   '''
   @TODO:
   Create an endpoint to POST a new question,
