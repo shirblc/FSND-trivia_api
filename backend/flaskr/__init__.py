@@ -20,6 +20,23 @@ def create_app(test_config=None):
       response.headers.add('Access-Control-Allow-Methods', 'GET, POST, DELETE')
       return response
 
+  # Function to paginate the questions and return them as a list
+  def paginate_questions(questions, current_page):
+      first_question_num = QUESTIONS_PER_PAGE * (current_page - 1)
+      paginated_questions = questions[first_question_num:(first_question_num+9)]
+      paginated_questions_list = []
+
+      for question in paginated_questions:
+          paginated_questions_list.append({
+          'id': question.id,
+          'question': question.question,
+          'answer': question.answer,
+          'category': question.category,
+          'difficulty': question.difficulty
+          })
+
+      return paginated_questions_list
+
   '''
   @TODO:
   Create an endpoint to handle GET requests
@@ -31,23 +48,12 @@ def create_app(test_config=None):
   def index():
       questions = Question.query.order_by(Question.id).all()
       current_page = request.args.get('page', 1, type=int)
-      first_question_num = QUESTIONS_PER_PAGE * (current_page - 1)
-      paginated_questions = questions[first_question_num:(first_question_num+9)]
-      paginated_questions_list = []
+      paginated_questions_list = paginate_questions(questions, current_page)
       categories = Category.query.all()
       categories_dict = {}
 
       for category in categories:
           categories_dict[category.id] = category.type
-
-      for question in paginated_questions:
-          paginated_questions_list.append({
-          'id': question.id,
-          'question': question.question,
-          'answer': question.answer,
-          'category': question.category,
-          'difficulty': question.difficulty
-          })
 
       return jsonify({
       'success': True,
