@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
@@ -46,6 +46,11 @@ def create_app(test_config=None):
   # Home route handler.
   @app.route('/')
   def index():
+      return redirect(url_for('load_questions'))
+
+  # Route handler for the questions page. Redirected from the home page.
+  @app.route('/questions')
+  def load_questions():
       questions = Question.query.order_by(Question.id).all()
       current_page = request.args.get('page', 1, type=int)
       paginated_questions_list = paginate_questions(questions, current_page)
