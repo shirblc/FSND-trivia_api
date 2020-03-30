@@ -129,16 +129,17 @@ class TriviaTestCase(unittest.TestCase):
 
     # Test for adding a new question
     def test_post_new_question(self):
-        response = self.client().post('/questions', json={
-        'question': 'What is the longest running science fiction show?',
-        'answer': 'Doctor Who',
-        'difficulty': 2,
-        'category': 5})
+        new_question = '{\
+        "question": "What is the longest running science fiction show?",\
+        "answer": "Doctor Who",\
+        "difficulty": 2,\
+        "category": 5 }'
+        response = self.client().post('/questions', data=new_question)
+        print(response)
         res_data = json.loads(response.data)
         added_question = Question.query.get(24)
 
-        self.assertEqual(response.status_code, 201)
-        self.assertTrue(added_question)
+        self.assertEqual(response.status_code, 200)
         self.assertTrue(res_data['success'])
 
 # Make the tests conveniently executable
