@@ -95,8 +95,7 @@ class TriviaTestCase(unittest.TestCase):
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(res_data['questions'], 2)
-        self.assertTrue(len(res_data['questions']))
+        self.assertEqual(len(res_data['questions']), 2)
         self.assertTrue(res_data['success'])
 
     # Test for search with term that doesn't exist in the database
