@@ -143,4 +143,13 @@ def create_app(test_config=None):
   including 404 and 422.
   '''
 
+  # Error handler for "not found" cases
+  @app.errorhandler(404)
+  def not_found_handler(error):
+      return jsonify({
+      'success': False,
+      'error': 404,
+      'message': 'Not found. The page you asked for does not exist.'
+      }), 404
+
   return app
