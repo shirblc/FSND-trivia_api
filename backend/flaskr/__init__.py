@@ -1,4 +1,4 @@
-import os
+import os, json
 from flask import Flask, request, abort, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -71,6 +71,21 @@ def create_app(test_config=None):
       'categories': categories_dict
       })
 
+
+  # Route handler for a search
+  @app.route('/questions', methods=['POST'])
+  def search_questions():
+      search_term = json.loads(request.data)['searchTerm']
+      questions = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
+      current_page = request.args.get('page', 1, type=int)
+      paginated_questions_list = paginate_questions(questions, current_page)
+
+      return jsonify({
+      'success': True,
+      'questions': paginated_questions_list,
+      'total_questions': len(questions),
+      'search_term': search_term
+      })
 
   '''
   @TODO:
