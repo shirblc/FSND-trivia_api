@@ -151,6 +151,24 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(len(res_data['categories']), 6)
         self.assertTrue(res_data['success'])
 
+    # Test for quiz by category
+    def test_quiz_with_category(self):
+        response = self.client().post('/quizzes', data='{"previous_questions": "", "quiz_category": 1}')
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_data['category'], 1)
+        self.assertTrue(res_data['success'])
+
+    # Test for quiz without category (all option)
+    def test_quiz_all_categories(self):
+        response = self.client().post('/quizzes', data='{"previous_questions": "", "quiz_category": 0}')
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(res_data['category'], 0)
+        self.assertTrue(res_data['success'])
+
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
