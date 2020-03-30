@@ -181,13 +181,13 @@ def create_app(test_config=None):
       'message': 'Not found. The page you asked for does not exist.'
       }), 404
 
-# Error handler for "unprocessable" cases
-@app.errorhandler(422)
-def unprocessable_handler(error):
-    return jsonify({
-    'success': False,
-    'error': 422,
-    'message': 'Unprocessable Entity. The identifier you used is incorrect.'
+  # Error handler for "unprocessable" cases
+  @app.errorhandler(422)
+  def unprocessable_handler(error):
+      return jsonify({
+      'success': False,
+      'error': 422,
+      'message': 'Unprocessable Entity. The identifier you used is incorrect.'
     }), 422
 
   return app
