@@ -70,17 +70,32 @@ def create_app(test_config=None):
 
   # Route handler for a search
   @app.route('/questions', methods=['POST'])
-  def search_questions():
-      search_term = json.loads(request.data)['searchTerm']
-      questions = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
+  def post_question():
+
+      # if the request sent was a search request
+      if('searchTerm' in json.loads(request.data)):
+          search_term = json.loads(request.data)['searchTerm']
+          questions = Question.query.filter(Question.question.ilike('%' + search_term + '%')).all()
+      # if not, it was a request to add a new question
+      else:
+          question_data = json.loads(request.data)
+          question = Question(question=question_data['question'], answer=question_data['answer'],
+          difficulty=question_data['difficulty'], category=question_data['category'])
+
+          # Try to add the new question to the database 
+          try:
+              question.insert()
+              questions = Question.query.all()
+          except:
+              abort(422)
+
       current_page = request.args.get('page', 1, type=int)
       paginated_questions_list = paginate_questions(questions, current_page)
 
       return jsonify({
       'success': True,
       'questions': paginated_questions_list,
-      'total_questions': len(questions),
-      'search_term': search_term
+      'total_questions': len(questions)
       })
 
   '''
