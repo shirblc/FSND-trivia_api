@@ -110,6 +110,18 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(new_question[22:71], added_question.question)
         self.assertTrue(res_data['success'])
 
+    # Test for adding an empty question
+    def test_error_post_empty_question(self):
+        new_question = '{\
+        "question": "",\
+        "answer": "",\
+        "difficulty": 0,\
+        "category": 0 }'
+        response = self.client().post('/questions', data=new_question)
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 422)
+        self.assertFalse(res_data['success'])
 
     # Questions-By-Category Pages Tests ('/categories/<id>/questions', GET)
     # -------------------------------------------------------

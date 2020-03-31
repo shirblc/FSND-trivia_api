@@ -73,7 +73,10 @@ def create_app(test_config=None):
       # if not, it was a request to add a new question
       else:
           question_data = json.loads(request.data)
-          question = Question(question=question_data['question'], answer=question_data['answer'],
+          if(question_data['question'] == '' or question_data['answer'] == ''):
+              abort(422)
+          else:
+              question = Question(question=question_data['question'], answer=question_data['answer'],
           difficulty=question_data['difficulty'], category=question_data['category'])
 
           # Try to add the new question to the database
