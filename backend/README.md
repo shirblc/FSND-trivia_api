@@ -65,7 +65,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   6. GET '/categories'
   7. POST '/quizzes'
 
-#### GET '/'
+### GET '/'
 **Description**: Home route. Redirects to the questions route.
 
 **Handler Function**: index.
@@ -81,7 +81,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 **CURL Request Sample**: `curl http://127.0.0.1:5000/`
 
 
-#### GET '/questions'
+### GET '/questions'
 **Description**: Questions endpoint to get all questions in the database, regardless of their category.
 
 **Handler Function**: load_questions.
@@ -193,7 +193,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 ```
 
 
-#### POST '/questions'
+### POST '/questions'
 **Description**: POST endpoint for searching the questions or for creating a new question.
 
 **Handler Function**: post_question.
@@ -327,7 +327,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 ```
 
 
-#### GET '/categories/<category_id>/questions'
+### GET '/categories/<category_id>/questions'
 **Description**: GET endpoint for getting the list of questions belonging to the selected category.
 
 **Handler Function**: load_category_questions.
@@ -391,7 +391,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 ```
 
 
-#### DELETE '/questions/<question_id>'
+### DELETE '/questions/<question_id>'
 **Description**: DELETE endpoint to delete a question from the database.
 
 **Handler Function**: delete_question.
@@ -493,7 +493,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 }
 ```
 
-#### GET '/categories'
+### GET '/categories'
 **Description**: GET endpoint to get the names of IDs of all the categories in the database.
 
 **Handler Function**: get_categories.
@@ -526,7 +526,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 }
 ```
 
-#### POST '/quizzes'
+### POST '/quizzes'
 **Description**: POST endpoint for playing the quiz. Gets the questions from the database and passes one question at a time to the frontend.
 
 **Handler Function**: play_quiz.
