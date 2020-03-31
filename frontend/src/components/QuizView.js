@@ -3,14 +3,14 @@ import $ from 'jquery';
 
 import '../stylesheets/QuizView.css';
 
-const questionsPerPlay = 5; 
+const questionsPerPlay = 5;
 
 class QuizView extends Component {
   constructor(props){
     super();
     this.state = {
         quizCategory: null,
-        previousQuestions: [], 
+        previousQuestions: [],
         showAnswer: false,
         categories: {},
         numCorrect: 0,
@@ -130,10 +130,13 @@ class QuizView extends Component {
     )
   }
 
+  // Checks the answer to see whethter it matches the answer in the database. Compares the answer either
+  // to an array (in case of a one-word answer) or to a string (in case of more than one word)
   evaluateAnswer = () => {
     const formatGuess = this.state.guess.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").toLowerCase()
     const answerArray = this.state.currentQuestion.answer.toLowerCase().split(' ');
-    return answerArray.includes(formatGuess)
+	const answerString = this.state.currentQuestion.answer.toLowerCase();
+    return (answerArray.includes(formatGuess) || formatGuess == answerString)
   }
 
   renderCorrectAnswer(){
