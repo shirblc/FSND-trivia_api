@@ -141,11 +141,13 @@ def create_app(test_config=None):
           question.delete()
           total_questions = Question.query.all()
           paginated_questions_list = paginate_questions(total_questions, current_page)
+          total_questions_num = len(total_questions)
 
       return jsonify({
       'success': True,
-      'question': question_id,
-      'total_questions': paginated_questions_list
+      'question': int(question_id),
+      'total_questions': total_questions_num,
+      'questions': paginated_questions_list
       })
 
   # Route handler for the categories list (for the new question page / quiz)

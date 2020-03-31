@@ -60,7 +60,7 @@ class TriviaTestCase(unittest.TestCase):
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(res_data['questions']), 10)
+        self.assertEqual(len(res_data['questions']), 8)
         self.assertEqual(res_data['current_page'], 2)
         self.assertTrue(res_data['success'])
 

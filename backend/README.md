@@ -370,15 +370,15 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - A success value ('success') - Boolean
   - The deleted question's ID ('question') - Integer
   - The total number of questions in the database ('total_questions') - Integer
+  - Questions to display ('questions') - List
 **Expected Errors**:
   - 422 - If the user attempts to delete a question that doesn't exist, the server returns an "unprocessable" error.
 **CURL Request Sample**: `curl -X DELETE http://127.0.0.1:5000/questions/6`
 **Response Example:**
 ```
 {
-  "question": "6",
-  "success": true,
-  "total_questions": [
+  "question": 6,
+  "questions": [
     {
       "answer": "Maya Angelou",
       "category": 4,
@@ -392,6 +392,13 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
       "difficulty": 1,
       "id": 9,
       "question": "What boxer's original name is Cassius Clay?"
+    },
+    {
+      "answer": "Tom Cruise",
+      "category": 5,
+      "difficulty": 4,
+      "id": 4,
+      "question": "What actor did author Anne Rice first denounce, then praise in the role of her beloved Lestat?"
     },
     {
       "answer": "Brazil",
@@ -441,15 +448,10 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
       "difficulty": 1,
       "id": 16,
       "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
-    },
-    {
-      "answer": "Mona Lisa",
-      "category": 2,
-      "difficulty": 3,
-      "id": 17,
-      "question": "La Giaconda is better known as what?"
     }
-  ]
+  ],
+  "success": true,
+  "total_questions": 18
 }
 ```
 
