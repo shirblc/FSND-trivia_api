@@ -198,6 +198,15 @@ def create_app(test_config=None):
       'category': category_id
       })
 
+  # Error handler for "bad request" cases
+  @app.errorhandler(400)
+  def bad_request_handler(error):
+      return jsonify({
+      'success': False,
+      'error': 400,
+      'message': 'Bad request.'
+      }), 400
+
   # Error handler for "not found" cases
   @app.errorhandler(404)
   def not_found_handler(error):
