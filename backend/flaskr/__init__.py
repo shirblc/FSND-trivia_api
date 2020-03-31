@@ -156,6 +156,7 @@ def create_app(test_config=None):
   # Route handler for the quiz
   @app.route('/quizzes', methods=['POST'])
   def play_quiz():
+      next_question = ''
       category = json.loads(request.data)['quiz_category']
       category_id = int(category['id'])
       previous_questions = json.loads(request.data)['previous_questions']
