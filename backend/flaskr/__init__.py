@@ -135,7 +135,7 @@ def create_app(test_config=None):
       'total_questions': total_questions
       })
 
-  # Route handler for the categories list (for the new question page)
+  # Route handler for the categories list (for the new question page / quiz)
   @app.route('/categories')
   def get_categories():
       categories = Category.query.all()
@@ -151,6 +151,35 @@ def create_app(test_config=None):
       return jsonify({
       'success': True,
       'categories': categories_dict
+      })
+
+  # Route handler for the quiz
+  @app.route('/quizzes', methods=['POST'])
+  def play_quiz():
+      category = json.loads(request.data)['quiz_category']
+      category_id = int(category['id'])
+      previous_questions = json.loads(request.data)['previous_questions']
+
+      # if the category number is 0, the user chose 'all', so all questions are valid
+      if(category_id == 0):
+          questions = Question.query.all()
+      # if the user chose a category
+      else:
+          questions = Question.query.filter(Question.category == category_id).all()
+
+      # Checks whether the question was already asked, if it was,
+      # continue to the next question in the database. If it wasn't,
+      # set this as the next quesiton and break from the loop.
+      for question in questions:
+          if(question.id in previous_questions):
+              continue
+          else:
+              next_question = question.format()
+              break
+
+      return jsonify({
+      'succcess': True,
+      'question': next_question
       })
 
   '''
