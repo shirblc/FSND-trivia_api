@@ -14,6 +14,7 @@ def create_app(test_config=None):
   setup_db(app)
   CORS(app)
 
+  # Adding CORS response headers
   @app.after_request
   def after_request(response):
       response.headers.add('Access-Control-Allow-Origin', '*')
@@ -22,10 +23,13 @@ def create_app(test_config=None):
 
   # Function to paginate the questions and return them as a list
   def paginate_questions(questions, current_page):
+      # Gets the number of the first question in the page and the relevant
+      # questions from the list passed to the function.
       first_question_num = QUESTIONS_PER_PAGE * (current_page - 1)
       paginated_questions = questions[first_question_num:(first_question_num+10)]
       paginated_questions_list = []
 
+      # For every question in the list, formats it and adds to the formatted list
       for question in paginated_questions:
           paginated_questions_list.append(question.format())
 
@@ -42,15 +46,19 @@ def create_app(test_config=None):
   # Route handler for the questions page. Redirected from the home page.
   @app.route('/questions')
   def load_questions():
+      # Gets the questions, categories and current page. Gets paginated Questions
+      # by sending the questions to the paginate function.
       questions = Question.query.order_by(Question.id).all()
       current_page = request.args.get('page', 1, type=int)
       paginated_questions_list = paginate_questions(questions, current_page)
       categories = Category.query.all()
       categories_dict = {}
 
+      # Creates a dictionary from all category objects.
       for category in categories:
           categories_dict[category.id] = category.type
 
+      # If there are no questions, the page is out of bounds.
       if(len(paginated_questions_list) == 0):
           abort(404)
 
@@ -62,10 +70,9 @@ def create_app(test_config=None):
       'categories': categories_dict
       })
 
-  # Route handler for a search
+  # Route handler for a search and for question submission
   @app.route('/questions', methods=['POST'])
   def post_question():
-
       # if the request sent was a search request
       if('searchTerm' in json.loads(request.data)):
           search_term = json.loads(request.data)['searchTerm']
@@ -73,6 +80,9 @@ def create_app(test_config=None):
       # if not, it was a request to add a new question
       else:
           question_data = json.loads(request.data)
+
+          # If the question or answer sent are empty, returns an error. otherwise
+          # creates a new Question object.
           if(question_data['question'] == '' or question_data['answer'] == ''):
               abort(422)
           else:
@@ -86,6 +96,9 @@ def create_app(test_config=None):
           except:
               abort(422)
 
+      # Gets paginated questions for display. If there was a search, the questions
+      # are the ones matching the search filter. If the user added a question, it
+      # simply returns all questions.
       current_page = request.args.get('page', 1, type=int)
       paginated_questions_list = paginate_questions(questions, current_page)
 
@@ -98,6 +111,7 @@ def create_app(test_config=None):
   # Route handler for category pages
   @app.route('/categories/<category_id>/questions')
   def load_category_questions(category_id):
+      # Gets the questions belonging to the current category and paginates them.
       questions = Question.query.filter(Question.category == category_id).all()
       current_page = request.args.get('page', 1, type=int)
       paginated_questions_list = paginate_questions(questions, current_page)
@@ -138,6 +152,7 @@ def create_app(test_config=None):
       categories = Category.query.all()
       categories_dict = {}
 
+      # Creates a dictionary from all category objects.
       for category in categories:
           categories_dict[category.id] = category.type
 
@@ -153,6 +168,8 @@ def create_app(test_config=None):
   # Route handler for the quiz
   @app.route('/quizzes', methods=['POST'])
   def play_quiz():
+      # Sets the next question to '' in order to account for 'no more questions'
+      # case. Gets the previous questions and the category ID from the request.
       next_question = ''
       category = json.loads(request.data)['quiz_category']
       category_id = int(category['id'])
