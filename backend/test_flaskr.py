@@ -148,7 +148,11 @@ class TriviaTestCase(unittest.TestCase):
 
     # Test for quiz by category
     def test_quiz_with_category(self):
-        response = self.client().post('/quizzes', data='{"previous_questions": "", "quiz_category": 1}')
+        quiz_data = '{\
+        "previous_questions": [],\
+        "quiz_category": {"type": "Science", "id": "1"} }'
+        response = self.client().post('/quizzes', data=quiz_data)
+        print(response)
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -157,7 +161,10 @@ class TriviaTestCase(unittest.TestCase):
 
     # Test for quiz without category (all option)
     def test_quiz_all_categories(self):
-        response = self.client().post('/quizzes', data='{"previous_questions": "", "quiz_category": 0}')
+        quiz_data = '{\
+        "previous_questions": [],\
+        "quiz_category": {"type": "None", "id": "0"} }'
+        response = self.client().post('/quizzes', data=quiz_data)
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
