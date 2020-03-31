@@ -26,9 +26,9 @@ This will install all of the required packages we selected within the `requireme
 
 - [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
 
-- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use handle the lightweight sqlite database. You'll primarily work in app.py and can reference models.py. 
+- [SQLAlchemy](https://www.sqlalchemy.org/) is the Python SQL toolkit and ORM we'll use handle the lightweight sqlite database. You'll primarily work in app.py and can reference models.py.
 
-- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server. 
+- [Flask-CORS](https://flask-cors.readthedocs.io/en/latest/#) is the extension we'll use to handle cross origin requests from our frontend server.
 
 ## Database Setup
 With Postgres running, restore a database using the trivia.psql file provided. From the backend folder in terminal run:
@@ -50,44 +50,126 @@ flask run
 
 Setting the `FLASK_ENV` variable to `development` will detect file changes and restart the server automatically.
 
-Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application. 
+Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application.
 
-## Tasks
 
-One note before you delve into your tasks: for each endpoint you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior. 
+## Application Endpoints
 
-1. Use Flask-CORS to enable cross-domain requests and set response headers. 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. 
-3. Create an endpoint to handle GET requests for all available categories. 
-4. Create an endpoint to DELETE question using a question ID. 
-5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score. 
-6. Create a POST endpoint to get questions based on category. 
-7. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question. 
-8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
-9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
+1. GET '/'
+2. GET '/questions'
+3. POST '/questions'
+4. GET '/categories/<category_id>/questions'
+5. DELETE '/questions/<question_id>'
+6. GET '/categories'
+7. POST '/quizzes'
 
-REVIEW_COMMENT
-```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
+### GET '/'
+**Description**: Home route. Redirects to the questions route.
+**Handler Function**: index.
+**Request Arguments**: None.
+**Required Data**: None.
+**Returns**: Redirect.
+**Expected Errors**: None.
+**CURL**: `curl http://127.0.0.1:5000/`
 
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
+### GET '/questions'
+**Description**: Questions endpoint to get all questions in the database, regardless of their category.
+**Handler Function**: load_questions.
+**Request Arguments**:
+1. Page [Optional; defaults to 1] - Integer - States the page the user is currently viewing, thus determining which questions to display.
+**Required Data**: None.
+**Returns**: An object containing:
+  - A success value ('success') - Boolean
+  - The user's current page ('current_page') - Integer
+  - The questions for the page ('questions') - List
+  - The total number of questions in the database ('total_questions') - Integer
+  - A dictionary containing all available categories ('categories') - Dictionary
+**Expected Errors**:
+  - 404 - In case there are no questions in the page the user asked for, the server returns a "not found" error.
+**CURL**: `curl http://127.0.0.1:5000/questions`
 
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+### POST '/questions'
+**Description**: POST endpoint for searching the questions or for creating a new question.
+**Handler Function**: post_question.
+**Request Arguments**: None.
+**Required Data**:
+1. For search: A JSON containing the search term ('searchTerm', string).
+2. For question submission: A JSON containing the required fields:
+  - The question - 'question' - String.
+  - The correct answer - 'answer' - String.
+  - Difficulty level - 'difficulty' - Integer.
+  - The category the question belongs to - 'category' - Integer.
+**Returns**: An object containing:
+  - A success value ('success') - Boolean
+  - 'questions' - List
+    1. For search - A list of questions matching the search criteria.
+    2. For question submission - The first 10 questions in the database (redirects the user to the home page).
+  - The total number of questions in the database ('total_questions') - Integer
+2. For question submission:
+**Expected Errors**:
+  - 422 - For question submission. In case there's an error adding the new question to the database or the question the user submitted is empty, the server returns an "unprocessable" error.
+**CURL**:
+1. For search: `curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"searchTerm": "title"}'`
+2. For question submission: `curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"question": "What is the longest running science fiction show?", "answer": "Doctor Who", "difficulty": 2, "category": 5}'`
 
-```
+### GET '/categories/<category_id>/questions'
+**Description**: GET endpoint for getting the list of questions belonging to the selected category.
+**Handler Function**: load_category_questions.
+**Request Arguments**:
+1. category_id [Required] - Integer - the ID of the category to view.
+2. Page [Optional; defaults to 1] - Integer - States the page the user is currently viewing, thus determining which questions to display.
+**Required Data**: None.
+**Returns**: An object containing:
+  - A success value ('success') - Boolean
+  - The user's current page ('current_page') - Integer
+  - The questions for the page and category ('questions') - List
+  - The total number of questions for the current category ('total_questions') - Integer
+  - The ID of the current category ('current_category') - Integer
+**Expected Errors**:
+  - 404 - In case there are no questions in the page the user asked for, or there's no category with the ID the user asked for, the server returns a "not found" error.
+**CURL**: `curl http://127.0.0.1:5000/categories/1/questions`
+
+### DELETE '/questions/<question_id>'
+**Description**: DELETE endpoint to delete a question from the database.
+**Handler Function**: delete_question.
+**Request Arguments**:
+1. question_id [required] - Integer - the ID of the question to delete.
+**Required Data**: None.
+**Returns**: An object containing:
+  - A success value ('success') - Boolean
+  - The deleted question's ID ('question') - Integer
+  - The total number of questions in the database ('total_questions') - Integer
+**Expected Errors**:
+  - 422 - If the user attempts to delete a question that doesn't exist, the server returns an "unprocessable" error.
+**CURL**: `curl -X DELETE http://127.0.0.1:5000/questions/2`
+
+### GET '/categories'
+**Description**: GET endpoint to get the names of IDs of all the categories in the database.
+**Handler Function**: get_categories.
+**Request Arguments**: None.
+**Required Data**: None.
+**Returns**: An object containing:
+  - A success value ('success') - Boolean
+  - A dictionary with all the categories in the database ('categories') - Dictionary
+**Expected Errors**:
+  - 404 - If there are no categories in the database, the server returns a "not found" error.
+**CURL**: `curl http://127.0.0.1:5000/categories`
+
+### POST '/quizzes'
+**Description**: POST endpoint for playing the quiz. Gets the questions from the database and passes one question at a time to the frontend.
+**Handler Function**: play_quiz.
+**Request Arguments**: None.
+**Required Data**: A JSON containing:
+  - The category chosen for the quiz - quiz_category - Dictionary:
+    - The name of the category - 'type' - String.
+    - The ID of the category - 'id' - String.
+  - The previously asked questions - previous_questions - List of Integers.
+**Returns**: An object containing:
+  - A success value ('success') - Boolean
+  - The next question in the quiz ('question') - Dictionary.
+  - The category chosen for the quiz ('category') - Integer.
+**Expected Errors**: None.
+**CURL**: `curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"previous_questions": [], "quiz_category": {"type": "None", "id": "0"}}'`
 
 
 ## Testing
