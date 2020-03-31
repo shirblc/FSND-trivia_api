@@ -29,11 +29,19 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
+
+    # Index Route Tests ('/', GET)
+    # -------------------------------------------------------
+
     # Test to ensure the home route redirects to the questions list
     def test_get_home_page(self):
         response = self.client().get('/')
 
         self.assertEqual(response.status_code, 302)
+
+
+    # Questions Page Tests ('/questions', GET)
+    # -------------------------------------------------------
 
     # Test for loading the main page (question list)
     def test_get_questions(self):
@@ -64,6 +72,48 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
 
+
+    # Search and New Questions route tests ('/questions', POST)
+    # -------------------------------------------------------
+
+    # Test for the search with a term that exists in the database
+    def test_post_search_term(self):
+        response = self.client().post('/questions', json={'searchTerm':'title'})
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(res_data['questions']), 2)
+        self.assertTrue(res_data['success'])
+
+    # Test for search with term that doesn't exist in the database
+    def test_post_search_nonexistent_term(self):
+        response = self.client().post('/questions', json={'searchTerm':'meow'})
+        res_data = json.loads(response.data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(res_data['success'])
+        self.assertFalse(len(res_data['questions']))
+
+    # Test for adding a new question
+    def test_post_new_question(self):
+        new_question = '{\
+        "question": "What is the longest running science fiction show?",\
+        "answer": "Doctor Who",\
+        "difficulty": 2,\
+        "category": 5 }'
+        response = self.client().post('/questions', data=new_question)
+
+        res_data = json.loads(response.data)
+        added_question = Question.query.get(24)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(new_question[22:71], added_question.question)
+        self.assertTrue(res_data['success'])
+
+
+    # Questions-By-Category Pages Tests ('/categories/<id>/questions', GET)
+    # -------------------------------------------------------
+
     # Test for a category questions pages
     def test_get_category_page(self):
         response = self.client().get('/categories/1/questions')
@@ -90,23 +140,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
 
-    # Test for the search with a term that exists in the database
-    def test_post_search_term(self):
-        response = self.client().post('/questions', json={'searchTerm':'title'})
-        res_data = json.loads(response.data)
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(res_data['questions']), 2)
-        self.assertTrue(res_data['success'])
-
-    # Test for search with term that doesn't exist in the database
-    def test_post_search_nonexistent_term(self):
-        response = self.client().post('/questions', json={'searchTerm':'meow'})
-        res_data = json.loads(response.data)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertTrue(res_data['success'])
-        self.assertFalse(len(res_data['questions']))
+    # Question Deletion Route Tests ('/questions/<id>', DELETE)
+    # -------------------------------------------------------
 
     # Test for deleting an existing question
     def test_delete_existing_question(self):
@@ -128,21 +164,9 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertFalse(res_data['success'])
 
-    # Test for adding a new question
-    def test_post_new_question(self):
-        new_question = '{\
-        "question": "What is the longest running science fiction show?",\
-        "answer": "Doctor Who",\
-        "difficulty": 2,\
-        "category": 5 }'
-        response = self.client().post('/questions', data=new_question)
 
-        res_data = json.loads(response.data)
-        added_question = Question.query.get(24)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(new_question[22:71], added_question.question)
-        self.assertTrue(res_data['success'])
+    # Categories List Route Tests ('/categories', GET)
+    # -------------------------------------------------------
 
     # Test for getting categories
     def test_get_categories(self):
@@ -152,6 +176,10 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(res_data['categories']), 6)
         self.assertTrue(res_data['success'])
+
+
+    # Quiz Route Tests ('/quizzes', POST)
+    # -------------------------------------------------------
 
     # Test for quiz by category
     def test_quiz_with_category(self):
