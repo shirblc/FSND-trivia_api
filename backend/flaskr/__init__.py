@@ -1,4 +1,4 @@
-import os, json
+import os, json, sys
 from flask import Flask, request, abort, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -195,5 +195,15 @@ def create_app(test_config=None):
       'error': 422,
       'message': 'Unprocessable Entity. The identifier you used is incorrect.'
     }), 422
+
+  # Error handler for "internal server error" cases
+  @app.errorhandler(500)
+  def internal_server_error_handler(error):
+      print(sys.exc_info())
+      return jsonify({
+      'success': False,
+      'error': 500,
+      'message': 'Internal server error.'
+    }), 500
 
   return app
