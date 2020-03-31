@@ -23,17 +23,11 @@ def create_app(test_config=None):
   # Function to paginate the questions and return them as a list
   def paginate_questions(questions, current_page):
       first_question_num = QUESTIONS_PER_PAGE * (current_page - 1)
-      paginated_questions = questions[first_question_num:(first_question_num+9)]
+      paginated_questions = questions[first_question_num:(first_question_num+10)]
       paginated_questions_list = []
 
       for question in paginated_questions:
-          paginated_questions_list.append({
-          'id': question.id,
-          'question': question.question,
-          'answer': question.answer,
-          'category': question.category,
-          'difficulty': question.difficulty
-          })
+          paginated_questions_list.append(question.format())
 
       return paginated_questions_list
 
@@ -180,26 +174,9 @@ def create_app(test_config=None):
 
       return jsonify({
       'succcess': True,
-      'question': next_question
+      'question': next_question,
+      'category': category_id
       })
-
-  '''
-  @TODO:
-  Create a POST endpoint to get questions to play the quiz.
-  This endpoint should take category and previous question parameters
-  and return a random questions within the given category,
-  if provided, and that is not one of the previous questions.
-
-  TEST: In the "Play" tab, after a user selects "All" or a category,
-  one question at a time is displayed, the user is allowed to answer
-  and shown whether they were correct or not.
-  '''
-
-  '''
-  @TODO:
-  Create error handlers for all expected errors
-  including 404 and 422.
-  '''
 
   # Error handler for "not found" cases
   @app.errorhandler(404)

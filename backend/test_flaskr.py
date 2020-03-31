@@ -29,11 +29,6 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-    """
-    TODO
-    Write at least one test for each test for successful operation and for expected errors.
-    """
-
     # Test for loading the main page (question list)
     def test_get_questions(self):
         response = self.client().get('/questions')
@@ -41,7 +36,7 @@ class TriviaTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(res_data['success'])
-        self.assertEqual(len(res_data['questions']), 9)
+        self.assertEqual(len(res_data['questions']), 10)
         self.assertEqual(res_data['current_page'], 1)
         self.assertTrue(len(res_data['categories']))
 
@@ -51,7 +46,7 @@ class TriviaTestCase(unittest.TestCase):
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(res_data['questions']), 9)
+        self.assertEqual(len(res_data['questions']), 10)
         self.assertEqual(res_data['current_page'], 2)
         self.assertTrue(res_data['success'])
 
