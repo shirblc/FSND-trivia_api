@@ -132,6 +132,7 @@ def create_app(test_config=None):
   @app.route('/questions/<question_id>', methods=['DELETE'])
   def delete_question(question_id):
       question = Question.query.filter(Question.id == question_id).one_or_none()
+      current_page = request.args.get('page', 1, type=int)
 
       # If the question doesn't exist, abort; otherwise delete
       if(question == None):
@@ -139,11 +140,12 @@ def create_app(test_config=None):
       else:
           question.delete()
           total_questions = Question.query.all()
+          paginated_questions_list = paginate_questions(total_questions, current_page)
 
       return jsonify({
       'success': True,
       'question': question_id,
-      'total_questions': total_questions
+      'total_questions': paginated_questions_list
       })
 
   # Route handler for the categories list (for the new question page / quiz)
