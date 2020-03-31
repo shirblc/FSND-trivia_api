@@ -173,7 +173,7 @@ def create_app(test_config=None):
               break
 
       return jsonify({
-      'succcess': True,
+      'success': True,
       'question': next_question,
       'category': category_id
       })
