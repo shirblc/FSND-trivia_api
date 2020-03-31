@@ -53,7 +53,9 @@ Setting the `FLASK_ENV` variable to `development` will detect file changes and r
 Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application.
 
 
-## Application Endpoints
+## API Documentation
+
+### Application Endpoints
 
 1. GET '/'
 2. GET '/questions'
@@ -63,7 +65,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 6. GET '/categories'
 7. POST '/quizzes'
 
-### GET '/'
+#### GET '/'
 **Description**: Home route. Redirects to the questions route.
 **Handler Function**: index.
 **Request Arguments**: None.
@@ -72,7 +74,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 **Expected Errors**: None.
 **CURL**: `curl http://127.0.0.1:5000/`
 
-### GET '/questions'
+#### GET '/questions'
 **Description**: Questions endpoint to get all questions in the database, regardless of their category.
 **Handler Function**: load_questions.
 **Request Arguments**:
@@ -88,7 +90,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - 404 - In case there are no questions in the page the user asked for, the server returns a "not found" error.
 **CURL**: `curl http://127.0.0.1:5000/questions`
 
-### POST '/questions'
+#### POST '/questions'
 **Description**: POST endpoint for searching the questions or for creating a new question.
 **Handler Function**: post_question.
 **Request Arguments**: None.
@@ -112,7 +114,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
 1. For search: `curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"searchTerm": "title"}'`
 2. For question submission: `curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"question": "What is the longest running science fiction show?", "answer": "Doctor Who", "difficulty": 2, "category": 5}'`
 
-### GET '/categories/<category_id>/questions'
+#### GET '/categories/<category_id>/questions'
 **Description**: GET endpoint for getting the list of questions belonging to the selected category.
 **Handler Function**: load_category_questions.
 **Request Arguments**:
@@ -129,7 +131,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - 404 - In case there are no questions in the page the user asked for, or there's no category with the ID the user asked for, the server returns a "not found" error.
 **CURL**: `curl http://127.0.0.1:5000/categories/1/questions`
 
-### DELETE '/questions/<question_id>'
+#### DELETE '/questions/<question_id>'
 **Description**: DELETE endpoint to delete a question from the database.
 **Handler Function**: delete_question.
 **Request Arguments**:
@@ -143,7 +145,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - 422 - If the user attempts to delete a question that doesn't exist, the server returns an "unprocessable" error.
 **CURL**: `curl -X DELETE http://127.0.0.1:5000/questions/2`
 
-### GET '/categories'
+#### GET '/categories'
 **Description**: GET endpoint to get the names of IDs of all the categories in the database.
 **Handler Function**: get_categories.
 **Request Arguments**: None.
@@ -155,7 +157,7 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - 404 - If there are no categories in the database, the server returns a "not found" error.
 **CURL**: `curl http://127.0.0.1:5000/categories`
 
-### POST '/quizzes'
+#### POST '/quizzes'
 **Description**: POST endpoint for playing the quiz. Gets the questions from the database and passes one question at a time to the frontend.
 **Handler Function**: play_quiz.
 **Request Arguments**: None.
@@ -170,6 +172,20 @@ Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` d
   - The category chosen for the quiz ('category') - Integer.
 **Expected Errors**: None.
 **CURL**: `curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"previous_questions": [], "quiz_category": {"type": "None", "id": "0"}}'`
+
+
+### Error Handlers
+
+The app contains the following error handlers:
+1. 400 - Bad Request
+2. 404 - Not Found
+3. 422 - Unprocessable Entity
+4. 500 - Internal Server Error
+
+For all errors, the server returns the following object:
+  - A success value ('success') - Boolean
+  - The HTTP status code ('error') - Integer
+  - An explanation message ('message') - String
 
 
 ## Testing
