@@ -141,6 +141,7 @@ class TriviaTestCase(unittest.TestCase):
         added_question = Question.query.get(24)
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(new_question[22:71], added_question.question)
         self.assertTrue(res_data['success'])
 
     # Test for getting categories
@@ -158,7 +159,6 @@ class TriviaTestCase(unittest.TestCase):
         "previous_questions": [],\
         "quiz_category": {"type": "Science", "id": "1"} }'
         response = self.client().post('/quizzes', data=quiz_data)
-        print(response)
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
