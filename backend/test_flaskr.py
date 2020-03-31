@@ -29,6 +29,12 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
+    # Test to ensure the home route redirects to the questions list
+    def test_get_home_page(self):
+        response = self.client().get('/')
+
+        self.assertEqual(response.status_code, 302)
+
     # Test for loading the main page (question list)
     def test_get_questions(self):
         response = self.client().get('/questions')
