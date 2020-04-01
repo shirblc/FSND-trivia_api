@@ -15,7 +15,8 @@ class TriviaTestCase(unittest.TestCase):
         self.app = create_app()
         self.client = self.app.test_client
         self.database_name = "trivia"
-        self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
+        self.database_path = "postgres://{}/{}".format('localhost:5432',
+                                                       self.database_name)
         setup_db(self.app, self.database_path)
 
         # binds the app to the current context
@@ -29,7 +30,6 @@ class TriviaTestCase(unittest.TestCase):
         """Executed after reach test"""
         pass
 
-
     # Index Route Tests ('/', GET)
     # -------------------------------------------------------
 
@@ -38,7 +38,6 @@ class TriviaTestCase(unittest.TestCase):
         response = self.client().get('/')
 
         self.assertEqual(response.status_code, 302)
-
 
     # Questions Page Tests ('/questions', GET)
     # -------------------------------------------------------
@@ -72,13 +71,13 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
 
-
     # Search and New Questions route tests ('/questions', POST)
     # -------------------------------------------------------
 
     # Test for the search with a term that exists in the database
     def test_post_search_term(self):
-        response = self.client().post('/questions', json={'searchTerm':'title'})
+        response = self.client().post('/questions', json={'searchTerm':
+                                                          'title'})
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -87,7 +86,8 @@ class TriviaTestCase(unittest.TestCase):
 
     # Test for search with term that doesn't exist in the database
     def test_post_search_nonexistent_term(self):
-        response = self.client().post('/questions', json={'searchTerm':'meow'})
+        response = self.client().post('/questions', json={'searchTerm':
+                                                          'meow'})
         res_data = json.loads(response.data)
 
         self.assertEqual(response.status_code, 200)
@@ -152,7 +152,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 404)
         self.assertFalse(res_data['success'])
 
-
     # Question Deletion Route Tests ('/questions/<id>', DELETE)
     # -------------------------------------------------------
 
@@ -160,7 +159,8 @@ class TriviaTestCase(unittest.TestCase):
     def test_delete_existing_question(self):
         response = self.client().delete('/questions/2')
         res_data = json.loads(response.data)
-        deleted_question = Question.query.filter(Question.id == 2).one_or_none()
+        deleted_question = Question.query.filter(Question.id ==
+                                                 2).one_or_none()
 
         self.assertEqual(response.status_code, 200)
         self.assertIsNone(deleted_question)
@@ -176,7 +176,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 422)
         self.assertFalse(res_data['success'])
 
-
     # Categories List Route Tests ('/categories', GET)
     # -------------------------------------------------------
 
@@ -188,7 +187,6 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(res_data['categories']), 6)
         self.assertTrue(res_data['success'])
-
 
     # Quiz Route Tests ('/quizzes', POST)
     # -------------------------------------------------------
@@ -216,6 +214,7 @@ class TriviaTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(res_data['category'], 0)
         self.assertTrue(res_data['success'])
+
 
 # Make the tests conveniently executable
 if __name__ == "__main__":
